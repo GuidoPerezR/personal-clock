@@ -1,66 +1,35 @@
-import { useEffect } from "react";
-import { useState } from "react";
-import { setTime } from "../scripts/setTime";
 import { Partials } from "./Partials";
+import { useCronometer } from "../hooks/useCronometer";
+import { useCronometerText } from "../hooks/useCronometerText";
+import { useIntervalCounter } from "../hooks/useIntervalCounter";
+import { usePartials } from "../hooks/usePartials";
 
 export const Chronometer = () => {
-  const [counter, setCounter] = useState(0);
-  const [cronometerText, setCronometerText] = useState("00:00.00");
-  const [isStarted, setIsStarted] = useState(false);
-  const [partials, setPartials] = useState([]);
-
-  useEffect(() => {
-    if (!isStarted) return;
-
-    const setMilisecondsInterval = setInterval(() => {
-      setCounter((prev) => prev + 10);
-
-      const text = setTime(counter);
-
-      setCronometerText(text);
-    }, 10);
-
-    return () => clearInterval(setMilisecondsInterval);
-  }, [isStarted, counter]);
+  const { cronometerText, restartCronometer, setCronometerValue } =
+    useCronometerText();
+  const { isStarted, startCronometer, pauseCronometer } = useCronometer();
+  const { counter, restartCounter } = useIntervalCounter({
+    isStarted,
+    setCronometerValue,
+  });
+  const { partials, restartPartials, createPartial } = usePartials({ counter });
 
   const handleStartButton = () => {
-    setIsStarted(!isStarted);
+    startCronometer();
   };
 
   const handlePauseButton = () => {
-    setIsStarted(false);
+    pauseCronometer();
   };
 
   const handleResetBtn = () => {
-    setCounter(0);
-    setCronometerText("00:00.00");
-    setPartials([]);
+    restartCounter();
+    restartCronometer();
+    restartPartials();
   };
 
   const handlePartialBtn = () => {
-    if (partials.length === 0) {
-      const newPartial = {
-        partialTime: cronometerText,
-        totalTime: cronometerText,
-        counter,
-      };
-      setPartials([newPartial]);
-      return;
-    }
-
-    const actualPartial = counter;
-    const prevPartial = partials[partials.length - 1]?.counter;
-
-    const partialTime = setTime(actualPartial - prevPartial);
-
-    const totalTime = setTime(counter);
-
-    const newPartial = {
-      partialTime,
-      totalTime,
-      counter,
-    };
-    setPartials([...partials, newPartial]);
+    createPartial();
   };
 
   const startButtonText =
