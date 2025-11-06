@@ -1,16 +1,9 @@
-import { useState } from "react";
 import { Clock } from "./components/Clock";
 import { Chronometer } from "./components/Chronometer";
+import { useCronometerVisibility } from "./hooks/useCronometerVisibility";
 
 function App() {
-  const [isCronometer, setIsCronometer] = useState(false);
-
-  const handleButtonClick = () => {
-    if (isCronometer) {
-      setIsCronometer(false);
-    }
-    setIsCronometer(!isCronometer);
-  };
+  const { isCronometer, manageCronometer } = useCronometerVisibility();
 
   const textButton = isCronometer ? "Volver a Reloj" : "Poner cronómetro";
 
@@ -21,7 +14,7 @@ function App() {
 
         <button
           className="font-semibold mt-24 text-purple-500 bg-purple-100 px-5 py-4 rounded-full cursor-pointer"
-          onClick={handleButtonClick}
+          onClick={manageCronometer}
         >
           {textButton}
         </button>
