@@ -10,7 +10,10 @@ export const Partials = ({ partials }) => {
       </header>
       <div className="w-full mt-4 flex flex-col-reverse">
         {partials.map(({ partialTime, totalTime }, i) => (
-          <article className="flex justify-around gap-12 text-purple-300 mt-2">
+          <article
+            className="flex justify-around gap-12 text-purple-300 mt-2"
+            key={totalTime}
+          >
             <span>{(i + 1).toString().padStart(2, "0")}</span>
             <span>{partialTime}</span>
             <span>{totalTime}</span>
